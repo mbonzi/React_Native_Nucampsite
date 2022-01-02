@@ -1,12 +1,26 @@
 import React, { Component } from 'react';
-import { Text, View, ScrollView, FlatList,
-    Modal, Button, StyleSheet,
-    Alert, PanResponder } from 'react-native';
-import { Card, Icon, Input, Rating } from 'react-native-elements';
+import { 
+    Text, 
+    View, 
+    ScrollView, 
+    FlatList,
+    Modal, 
+    Button, 
+    StyleSheet,
+    Alert, 
+    PanResponder 
+} from 'react-native';
+import { 
+    Card, 
+    Icon, 
+    Input, 
+    Rating } 
+    from 'react-native-elements';
 import { connect } from 'react-redux';
 import { baseUrl } from '../shared/baseUrl';
 import { postFavorite, postComment } from '../redux/ActionCreators';
 import * as Animatable from 'react-native-animatable';
+
 
 const mapStateToProps = state => {
     return {
@@ -16,10 +30,12 @@ const mapStateToProps = state => {
     };
 };
 
+
 const mapDispatchToProps = {
     postFavorite: campsiteId => postFavorite(campsiteId),
     postComment: (campsiteId, rating, author, text) => postComment(campsiteId, rating, author, text)
 };
+
 
 function RenderCampsite(props) {
 
@@ -29,18 +45,23 @@ function RenderCampsite(props) {
 
     const recognizeDrag = ({dx}) => (dx < -200) ? true : false;
 
+    const recognizeComment = ({dx}) => (dx > 200) ? true : false;
+
     const panResponder = PanResponder.create({
         onStartShouldSetPanResponder: () => true,
+
         onPanResponderGrant: () => {
             view.current.rubberBand(1000)
             .then(endState => console.log(endState.finished ? 'finished' : 'canceled'));
         },
+
         onPanResponderEnd: (e, gestureState) => {
             console.log('pan responder end', gestureState);
+
             if (recognizeDrag(gestureState)) {
                 Alert.alert(
                     'Add Favorite',
-                    'Are you sure you wish to add ' + campsite.name + ' to favorites?',
+                    'Are you sure you wish to add ' + campsite.name + ' to your favorites?',
                     [
                         {
                             text: 'Cancel',
@@ -50,11 +71,13 @@ function RenderCampsite(props) {
                         {
                             text: 'OK',
                             onPress: () => props.favorite ?
-                                console.log('Already set as a favorite') : props.markFavorite()
+                                console.log('Campsite already set as a favorite') : props.markFavorite()
                         }
                     ],
                     { cancelable: false }
                 );
+            } else if (recognizeComment(gestureState)) {
+                props.onShowModal();
             }
             return true;
         }
@@ -76,11 +99,12 @@ function RenderCampsite(props) {
                     <Text style={{margin: 10}}>
                         {campsite.description}
                     </Text>
+
                     <View style={styles.cardRow}>
                         <Icon
                             name={props.favorite ? 'heart' : 'heart-o'}
                             type='font-awesome'
-                            color='#f50'
+                            color='red'
                             raised
                             reverse
                             onPress={() =>
@@ -114,6 +138,7 @@ function RenderCampsite(props) {
     return <View />;
 }
 
+
 function RenderComments({comments}) {
 
     const renderCommentItem = ({item}) => {
@@ -126,7 +151,10 @@ function RenderComments({comments}) {
                     startingValue={item.rating}
                     imageSize={10}
                     readonly
-                    style={{alignItems: 'flex-start', paddingVertical: '5%'}}
+                    style={{
+                        alignItems: 'flex-start', 
+                        paddingVertical: '5%'
+                    }}
                 />
                 <Text style={{fontSize: 12}}>
                     {`-- ${item.author}, ${item.date}`}
@@ -147,6 +175,7 @@ function RenderComments({comments}) {
   </Animatable.View>
     );
 }
+
 
 class CampsiteInfo extends Component {
 
@@ -254,6 +283,7 @@ class CampsiteInfo extends Component {
     }
 }
 
+
 const styles = StyleSheet.create({
     cardRow: {
         alignItems: 'center',
@@ -267,5 +297,6 @@ const styles = StyleSheet.create({
         margin: 20
     }
 });
+
 
 export default connect(mapStateToProps, mapDispatchToProps)(CampsiteInfo);

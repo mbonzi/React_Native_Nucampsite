@@ -12,6 +12,7 @@ import {
 import DateTimePicker from "@react-native-community/datetimepicker";
 import * as Animatable from "react-native-animatable";
 
+
 class Reservation extends Component {
   constructor(props) {
     super(props);
@@ -136,6 +137,7 @@ class Reservation extends Component {
   }
 }
 
+
 const styles = StyleSheet.create({
   formRow: {
     alignItems: "center",
@@ -152,5 +154,6 @@ const styles = StyleSheet.create({
     flex: 1,
   }
 });
+
 
 export default Reservation;
